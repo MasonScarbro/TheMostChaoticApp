@@ -1,16 +1,1 @@
-# learningdart2
-
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+An App built using flutter, Its in progress, but esiantially I spent a week learning flutter, and then I realized, I dont have an app Idea, so Im just building a crazy app that will send inspirational notifications and have a vine sounds section but all the sounds are just me impersanating the vines.
