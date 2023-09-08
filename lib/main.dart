@@ -20,11 +20,13 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 18, 11, 112)),
         ),
-        home: MyHomePage(),
+        home: const MyHomePage(),
       ),
     );
   }
 }
+
+
 
 class MyAppState extends ChangeNotifier {
   var current = WordPair.random();
@@ -37,7 +39,8 @@ class MyAppState extends ChangeNotifier {
   var favorites = <WordPair>[];
   var playing = <String>[];
   var currentPlaying = '';
-
+  bool donePlaying = false;
+  
   void toggleFavorite() {
     if (favorites.contains(current)) {
       favorites.remove(current);
@@ -46,8 +49,11 @@ class MyAppState extends ChangeNotifier {
     }
     notifyListeners();
   }
+   
+  
 
   void togglePlaying(String currentPlaying) {
+    
     if (playing.contains(currentPlaying)) {
       playing.remove(currentPlaying);
       currentPlaying = '';
@@ -65,6 +71,8 @@ class MyAppState extends ChangeNotifier {
 }
 
 class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
+
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
@@ -125,6 +133,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
 class GeneratorPage extends StatelessWidget {
+  const GeneratorPage({super.key});
+
+  
+
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
@@ -156,6 +168,7 @@ class GeneratorPage extends StatelessWidget {
               const SizedBox(width: 10),
               ElevatedButton(
                 onPressed: () {
+                  
                   appState.getNext();
                 },
                 child: const Text('Next'),
@@ -176,15 +189,18 @@ class FavoritesPage extends StatefulWidget {
 class _FavoritesPageState extends State<FavoritesPage> {
   @override
   Widget build(BuildContext context) {
-    IconData iconData;
     var appState = context.watch<MyAppState>();
-    if (appState.playing.contains(appState.currentPlaying)) {
-      iconData = Icons.pause;
-    } else {
-      iconData = Icons.play_arrow;
-    }
+
+    //Logic to handle the stopping of the player at the end
+    appState.player.onPlayerComplete.listen((state) { 
+      PlayerState.completed;
+      setState(() {
+        appState.iconData = Icons.play_arrow;
+      });
+    });
+
     
-    final player = appState.player;
+    
     return ListView(
       children: [
         Column(
@@ -192,6 +208,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
           children: [
             ElevatedButton(
               onPressed: () {
+                appState.player.stop(); // TESTING, will stop any other sounds before play!
                 appState.togglePlaying('losser.mp3');
               },
               child: Icon(appState.iconData),
