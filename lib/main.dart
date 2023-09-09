@@ -31,7 +31,13 @@ class MyApp extends StatelessWidget {
 class MyAppState extends ChangeNotifier {
   var current = WordPair.random();
   final player = AudioPlayer();
+
   IconData iconData = Icons.play_arrow;
+  Map<String, IconData> soundIconMap = {
+    'losser.mp3': Icons.play_arrow,
+    'chlorofimr.mp3': Icons.play_arrow,
+    // Add more sound-file to icon mappings here
+  };
   void getNext() {
     current = WordPair.random();
     notifyListeners(); //notifies the change
@@ -56,11 +62,11 @@ class MyAppState extends ChangeNotifier {
     
     if (playing.contains(currentPlaying)) {
       playing.remove(currentPlaying);
+      soundIconMap[currentPlaying] = Icons.play_arrow;
       currentPlaying = '';
       player.stop();
-      iconData = Icons.play_arrow;
     } else {
-      iconData = Icons.pause;
+      soundIconMap[currentPlaying] = Icons.pause;
       playing.add(currentPlaying);
       player.play(AssetSource(currentPlaying));
     }
@@ -195,28 +201,85 @@ class _FavoritesPageState extends State<FavoritesPage> {
     appState.player.onPlayerComplete.listen((state) { 
       PlayerState.completed;
       setState(() {
-        appState.iconData = Icons.play_arrow;
+        appState.soundIconMap.forEach((soundFile, _){
+          appState.soundIconMap[soundFile] = Icons.play_arrow;
+        });
       });
     });
 
     
     
-    return ListView(
-      children: [
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                appState.player.stop(); // TESTING, will stop any other sounds before play!
-                appState.togglePlaying('losser.mp3');
-              },
-              child: Icon(appState.iconData),
-              
-            ),
-          ],
-        )
-      ],
+    return SafeArea(
+      minimum: const EdgeInsets.all(16.0),
+      child: ListView(
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SoundFile(appState: appState, soundFileName: 'losser.mp3', name: 'Losser'),
+                  SoundFile(appState: appState, soundFileName: 'chlorofimr.mp3', name: 'Chloroform'),
+                  SoundFile(appState: appState, soundFileName: 'creep.mp3', name: 'Creep'),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SoundFile(appState: appState, soundFileName: 'hah.mp3', name: 'Mix'),
+                  SoundFile(appState: appState, soundFileName: 'nosurp.mp3', name: 'No Surprises'),
+                  SoundFile(appState: appState, soundFileName: 'slow.mp3', name: 'Slow'),
+                  
+                ],
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class SoundFile extends StatelessWidget {
+
+  const SoundFile({
+    super.key,
+    required this.appState,
+    required this.soundFileName,
+    required this.name,
+  });
+
+  final MyAppState appState;
+  final String soundFileName;
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    
+    appState.soundIconMap[soundFileName] ??= Icons.play_arrow; // automatically assigns the play arrow if it does not exist see more in cmments below
+    /*
+    about the above code, Due to the way darts operator overloading works it actually will automatically create 
+    a new mapping to the sound file if it does not exist Its part of darts null saftey features I believe all that
+    code does is make sure that the above will start with the play button upon creation of the soundfile widget
+    otherwise no icon would appear until I click the button!
+    */
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(name),
+          ElevatedButton(
+            onPressed: () {
+              appState.player.stop(); // TESTING, will stop any other sounds before play!
+              appState.togglePlaying(soundFileName);
+            },
+            child: Icon(appState.soundIconMap[soundFileName]),
+            
+          ),
+        ],
+      ),
     );
   }
 }
