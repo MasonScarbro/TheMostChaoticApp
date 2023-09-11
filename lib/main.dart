@@ -61,15 +61,26 @@ class MyAppState extends ChangeNotifier {
   void togglePlaying(String currentPlaying) {
     
     if (playing.contains(currentPlaying)) {
-      playing.remove(currentPlaying);
-      soundIconMap[currentPlaying] = Icons.play_arrow;
-      currentPlaying = '';
       player.stop();
-    } else {
+      soundIconMap[currentPlaying] = Icons.play_arrow;
+      playing.clear();
+    } else if (playing.isNotEmpty) {
+      // Not the best implementation but if another sound is 
+      // clicked it will stop all others and reset their Icon
+      player.stop();
+
+      for (String sound in playing) {
+        soundIconMap[sound] = Icons.play_arrow;
+      }
+
+      playing.clear();
+  }
+    else {
       soundIconMap[currentPlaying] = Icons.pause;
       playing.add(currentPlaying);
       player.play(AssetSource(currentPlaying));
-    }
+    } 
+    
     notifyListeners();
   }
 
@@ -230,6 +241,42 @@ class _FavoritesPageState extends State<FavoritesPage> {
                   SoundFile(appState: appState, soundFileName: 'hah.mp3', name: 'Mix'),
                   SoundFile(appState: appState, soundFileName: 'nosurp.mp3', name: 'No Surprises'),
                   SoundFile(appState: appState, soundFileName: 'slow.mp3', name: 'Slow'),
+                  
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SoundFile(appState: appState, soundFileName: 'dnc.mp3', name: 'Dawn Chorus'),
+                  SoundFile(appState: appState, soundFileName: 'biutad.mp3', name: 'Bitter Sweet Symphony'),
+                  SoundFile(appState: appState, soundFileName: 'covet.mp3', name: 'Covet'),
+                  
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SoundFile(appState: appState, soundFileName: 'Motha.mp3', name: 'Mother'),
+                  SoundFile(appState: appState, soundFileName: 'highdry.mp3', name: 'High and Dry'),
+                  SoundFile(appState: appState, soundFileName: 'Today.mp3', name: 'Today'),
+                  
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SoundFile(appState: appState, soundFileName: 'undone.mp3', name: 'Undone'),
+                  SoundFile(appState: appState, soundFileName: 'FPT.mp3', name: 'Fake Plastic Trees'),
+                  SoundFile(appState: appState, soundFileName: 'lazyeye.mp3', name: 'Lazy Eye'),
+                  
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SoundFile(appState: appState, soundFileName: 'viva.mp3', name: 'Viva La Vida'),
+                  SoundFile(appState: appState, soundFileName: 'letdown.mp3', name: 'Let Down'),
+                  SoundFile(appState: appState, soundFileName: 'kickthatrag.mp3', name: 'Kick The Tragedy'),
                   
                 ],
               ),
